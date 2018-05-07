@@ -1,7 +1,7 @@
 .PHONY: deps
 
 CC=gcc
-CFLAGS=-lstdc++ -O 
+CFLAGS=-O -lstdc++
 
 all: deps
 
@@ -10,16 +10,17 @@ deps:
 
 clean:
 	rm -f *.o
+	rm -f *.obj
 
-posit.o: posit.cpp
-	$(CC) $(CFLAGS) -c posit.cpp
+posit.obj:
+	$(CC) $(CFLAGS) -c posit.cpp -o posit.obj
 
 #####################
 # PROOF-OF-CONCEPTS #
 #####################
 
-poc: main.o posit.o
-	$(CC) $(CFLAGS) -o poc.o main.o posit.o
+poc: poc.obj posit.obj
+	$(CC) $(CFLAGS) -o poc.o poc.obj posit.obj
 
-main.o: main.cpp
-	$(CC) $(CFLAGS) -c main.cpp
+poc.obj:
+	$(CC) $(CFLAGS) -c poc.cpp -o poc.obj
