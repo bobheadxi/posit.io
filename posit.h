@@ -7,7 +7,7 @@
 
 namespace posit
 {
-    int poc();
+    int platform();
 }
 
 #endif // #ifndef POSIT_H

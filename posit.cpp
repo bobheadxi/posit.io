@@ -9,7 +9,7 @@ extern "C" {
 }
 
 namespace posit {
-  int poc()
+  int platform()
   {
     return NETCODE_PLATFORM;
   }
