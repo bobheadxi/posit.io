@@ -1,7 +1,8 @@
 .PHONY: deps
 
 CC=gcc
-CFLAGS=-O -lstdc++
+CFLAGS=-O
+LINKFLAGS=-lstdc++
 
 all: deps
 
@@ -20,7 +21,7 @@ posit.obj:
 #####################
 
 poc: clean poc.obj posit.obj
-	$(CC) $(CFLAGS) -o poc.o poc.obj posit.obj
+	$(CC) $(CFLAGS) $(LINKFLAGS) -o poc.o poc.obj posit.obj
 
 poc.obj:
 	$(CC) $(CFLAGS) -c poc.cpp -o poc.obj
