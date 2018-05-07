@@ -19,7 +19,7 @@ posit.obj:
 # PROOF-OF-CONCEPTS #
 #####################
 
-poc: poc.obj posit.obj
+poc: clean poc.obj posit.obj
 	$(CC) $(CFLAGS) -o poc.o poc.obj posit.obj
 
 poc.obj:
