@@ -27,6 +27,8 @@ namespace posit
 
 } // End namespace posit
 
-/*! @} End namespace posit documentation */
+/**
+ * @} End namespace posit documentation
+ */
 
 #endif // #ifndef POSIT_H
