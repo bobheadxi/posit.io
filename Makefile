@@ -1,6 +1,6 @@
 .PHONY: deps docs clean
 
-CC=gcc
+CC=clang
 CFLAGS=-O
 LINKFLAGS=-lstdc++
 
