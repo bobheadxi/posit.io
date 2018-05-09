@@ -1,4 +1,4 @@
-.PHONY: deps
+.PHONY: deps docs clean
 
 CC=gcc
 CFLAGS=-O
@@ -8,6 +8,9 @@ all: deps
 
 deps:
 	git submodule update --init --recursive vendor
+
+docs:
+	doxygen .doxygenrc
 
 clean:
 	rm -f *.o
