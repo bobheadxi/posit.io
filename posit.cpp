@@ -5,7 +5,7 @@
 #include "posit.h"
 
 extern "C" {
-  #include "netcode.io/netcode.h"
+  #include "vendor/netcode.io/netcode.h"
 }
 
 namespace posit {

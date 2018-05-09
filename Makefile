@@ -7,7 +7,7 @@ LINKFLAGS=-lstdc++
 all: deps
 
 deps:
-	git submodule update --init --recursive
+	git submodule update --init --recursive vendor
 
 clean:
 	rm -f *.o
