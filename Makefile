@@ -1,13 +1,16 @@
-.PHONY: deps
+.PHONY: deps docs clean
 
-CC=gcc
+CC=clang
 CFLAGS=-O
 LINKFLAGS=-lstdc++
 
 all: deps
 
 deps:
-	git submodule update --init --recursive
+	git submodule update --init --recursive vendor
+
+docs:
+	doxygen .doxygenrc
 
 clean:
 	rm -f *.o

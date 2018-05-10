@@ -1,11 +1,13 @@
-/*
-  posit.io library implementation
-*/
+/**
+ * posit.io library implementation.
+ * 
+ * @file posit.cpp
+ */
 
 #include "posit.h"
 
 extern "C" {
-  #include "netcode.io/netcode.h"
+  #include "vendor/netcode.io/netcode.h"
 }
 
 namespace posit {
@@ -13,4 +15,4 @@ namespace posit {
   {
     return NETCODE_PLATFORM;
   }
-}
+} // End namespace posit

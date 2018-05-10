@@ -1,10 +1,17 @@
-/*
-    Temporary proof-of-concept demonstrator.
-*/
+/**
+ * Temporary proof-of-concept demonstrations.
+ * 
+ * @file poc.cpp
+ */
 
 #include "posit.h"
 #include <iostream>
 
+/**
+ * Proof of concept runner.
+ * Use this to test out POCs. Build using `make poc`.
+ * @returns int 
+ */
 int main()
 {
     std::cout

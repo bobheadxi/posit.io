@@ -1,5 +1,9 @@
 {
     "files.associations": {
         "ostream": "cpp"
-    }
+    },
+    "doxdocgen.generic.authorTag": "",
+    "doxdocgen.generic.dateTemplate": "",
+    "doxdocgen.generic.briefTemplate": "",
+    "doxdocgen.generic.returnTemplate": "@returns {type} ",
 }

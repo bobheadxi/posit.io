@@ -33,3 +33,6 @@
 
 # Misc.
 .DS_Store
+
+# Documentation - keep ignored until first release
+docs
