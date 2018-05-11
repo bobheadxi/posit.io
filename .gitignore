@@ -1,3 +1,7 @@
+# posit.io executables
+poc
+positd
+
 # Prerequisites
 *.d
 
