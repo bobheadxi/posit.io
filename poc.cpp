@@ -100,7 +100,7 @@ int main(int argc, char **argv)
         time += delta_time;
     }
 
-    printf("status: shutting down\n");
+    std::cout << "status: shutting down" << std::endl;
 
     posit::destroyServer(server);
     posit::terminate();

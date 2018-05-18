@@ -79,12 +79,15 @@ namespace posit
 
     void startServer(posit::Server *server, int clients);
     void updateServer(posit::Server *server, double time);
+    void destroyServer(posit::Server *server);
     
     int isClientConnected(posit::Server *server, int clientID);
     void sendPacket(posit::Server *server, int clientID, uint8_t packetData, int packetBytes);
 
     uint8_t *receivePacket(posit::Server *server, int clientID, uint64_t *packetData, int *packetBytes);
     void freePacket(posit::Server *server, void *packet);
+
+    void sleep(double deltaTime);
 } // End namespace posit
 
 /**
