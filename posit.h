@@ -26,6 +26,19 @@ namespace posit
     int platform();
 
     /**
+     * Netcode max clients
+     * @returns int 
+     */
+    int maxClients();
+
+    /**
+     * Netcode max packet size
+     * @returns int 
+     */
+    int maxPacketSize();
+
+
+    /**
      * Creates posit server.
      * @returns int 
      */
@@ -64,6 +77,14 @@ namespace posit
             posit::ServerState *state;
     };
 
+    void startServer(posit::Server *server, int clients);
+    void updateServer(posit::Server *server, double time);
+    
+    int isClientConnected(posit::Server *server, int clientID);
+    void sendPacket(posit::Server *server, int clientID, uint8_t packetData, int packetBytes);
+
+    uint8_t *receivePacket(posit::Server *server, int clientID, uint64_t *packetData, int *packetBytes);
+    void freePacket(posit::Server *server, void *packet);
 } // End namespace posit
 
 /**
