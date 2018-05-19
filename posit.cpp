@@ -5,6 +5,7 @@
  */
 
 #include "posit.h"
+#include <cstring>
 
 extern "C"
 {
@@ -13,6 +14,8 @@ extern "C"
 
 namespace posit
 {
+
+// ---------------------------------------------------------------------------------
 
 int platform()
 {
@@ -29,26 +32,86 @@ void terminate()
     netcode_term();
 }
 
-struct ServerOptions
+// ---------------------------------------------------------------------------------
+
+ServerOptions::ServerOptions(uint64_t setProtocolID, uint8_t *setPrivateKey, int setKeyBytes)
 {
-    netcode_server_config_t netcodeServerConfig;
+    this->protocolID = setProtocolID;
+    this->privateKeyBytes = setKeyBytes;
+    memcpy(this->privateKey, setPrivateKey, setKeyBytes);
+}
 
-    ServerOptions()
-    {
-        // Set up with netcode defaults
-        netcode_default_server_config(&netcodeServerConfig);
-    }
+// ---------------------------------------------------------------------------------
 
-    ServerOptions(uint64_t protocolID)
-    {
-        ServerOptions();
-        netcodeServerConfig.protocol_id = protocolID;
-    }
-};
+Server::Server(char *address, double time, posit::ServerOptions opts)
+{
+    // Set up configuration
+    struct netcode_server_config_t *netConfig;
+    netcode_default_server_config(netConfig);
+    netConfig->protocol_id = opts.protocolID;
+    memcpy(netConfig->private_key, opts.privateKey, opts.privateKeyBytes);
 
-struct ServerState
+    // Create server
+    this->netcodeServer = netcode_server_create(
+        address, netConfig, time);
+}
+
+Server::~Server()
+{
+    this->destroy();
+}
+
+void Server::start(int clients)
+{
+    netcode_server_start(netcodeServer, clients);
+}
+
+void Server::update(double time)
+{
+    netcode_server_update(this->netcodeServer, time);
+}
+
+void Server::destroy()
+{
+    netcode_server_destroy(this->netcodeServer);
+}
+
+int Server::isClientConnected(int clientID)
+{
+    return netcode_server_client_connected(
+        this->netcodeServer,
+        clientID);
+}
+
+void Server::sendPacketToClient(int clientID, uint8_t *packetData, int packetLength)
+{
+    netcode_server_send_packet(this->netcodeServer, clientID, packetData, packetLength);
+}
+
+uint8_t *Server::receivePacket(int clientID, uint64_t *packetData, int *packetLength)
+{
+    return netcode_server_receive_packet(
+        this->netcodeServer,
+        clientID,
+        packetLength,
+        packetData);
+}
+
+void Server::freePacket(void *packet)
+{
+    netcode_server_free_packet(this->netcodeServer, packet);
+}
+
+// ---------------------------------------------------------------------------------
+
+void sendPacketToServer(posit::Server *server, int clientID, uint8_t packetData, int packetBytes)
 {
 
-};
+}
+
+void sleep(double seconds)
+{
+    netcode_sleep(seconds);
+}
 
 } // End namespace posit

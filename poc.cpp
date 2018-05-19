@@ -1,7 +1,7 @@
 /**
- * posit.io daemon implementation
+ * posit.io proof-of-concepts
  * 
- * @file positd.cpp
+ * @file poc.cpp
  */
 
 #include "posit.h"
@@ -13,7 +13,7 @@
 #include <signal.h>
 #include <inttypes.h>
 
-// Indicates if the an interrupt request has been sent
+// Indicates if an interrupt request has been sent
 static volatile int quit = 0;
 
 /**
@@ -26,17 +26,23 @@ void interrupt_handler(int signal)
     quit = 1;
 }
 
+// Verification stuff for server connection
 #define TEST_PROTOCOL_ID 0x1122334455667788
+static uint8_t privateKey[32] = {0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
+                                 0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4,
+                                 0x43, 0x71, 0xd6, 0x2c, 0xd1, 0x99, 0x27, 0x26,
+                                 0x6b, 0x3c, 0x60, 0xf4, 0xb7, 0x15, 0xab, 0xa1};
 
-// The main daemon process
 int main(int argc, char **argv)
 {
+    // Read arg from command line or use a default
     char *serverAddress = "127.0.0.1:40000";
     if (argc > 1)
     {
         serverAddress = argv[1];
     }
 
+    // Set up time-related constants
     double time = 0.0;
     double delta_time = 1.0 / 60.0;
 
@@ -48,8 +54,8 @@ int main(int argc, char **argv)
     }
 
     // Set up server
-    struct posit::ServerOptions *options = new posit::ServerOptions();
-    struct posit::Server *server = new posit::Server(serverAddress, options, time);
+    struct posit::ServerOptions options = posit::ServerOptions(TEST_PROTOCOL_ID, privateKey, 32);
+    struct posit::Server *server = new posit::Server(serverAddress, time, options);
     if (!server)
     {
         std::cout << "error: failed to create server" << std::endl;
@@ -58,26 +64,31 @@ int main(int argc, char **argv)
 
     // LET'S GO
     int maxClients = posit::maxClients();
-    posit::startServer(server, maxClients);
+    server->start(maxClients);
     signal(SIGINT, interrupt_handler);
 
+    // Build test packet data
     int maxPacketSize = posit::maxPacketSize();
-    uint8_t packet_data[maxPacketSize];
+    uint8_t packetData[maxPacketSize];
     int i;
     for (i = 0; i < posit::maxPacketSize(); ++i)
     {
-        packet_data[i] = (uint8_t)i;
+        packetData[i] = (uint8_t)i;
     }
 
+    // Spin until you rudely interrupt as always
     while (!quit)
     {
-        posit::startServer(server, time);
+        // Tick
+        server->update(time);
 
-        if (posit::isClientConnected(server, 0))
+        // Check if client is connected, and attempt to send packet
+        if (server->isClientConnected(0))
         {
-            posit::sendPacket(server, 0, packet_data, maxPacketSize);
+            server->sendPacketToClient(0, packetData, maxPacketSize);
         }
 
+        // Verify server recieved packets
         int clientID;
         for (clientID = 0; clientID < maxClients; ++clientID)
         {
@@ -85,23 +96,28 @@ int main(int argc, char **argv)
             {
                 int packetBytes;
                 uint64_t packetSequence;
-                void *packet = posit::receivePacket(server, clientID, &packetSequence, &packetBytes);
+                void *packet = server->receivePacket(clientID, &packetSequence, &packetBytes);
                 if (!packet)
+                {
                     break;
+                }
                 (void)packetSequence;
-                assert(packetBytes == maxPacketSize);
-                assert(memcmp(packet, packet_data, maxPacketSize) == 0);
 
-                posit::freePacket(server, packet);
+                // Checks
+                assert(packetBytes == maxPacketSize);
+                assert(memcmp(packet, packetData, maxPacketSize) == 0);
+
+                server->freePacket(packet);
             }
         }
 
+        // Wait a moment before repeating
         posit::sleep(delta_time);
         time += delta_time;
     }
 
+    // Goodbye world
     std::cout << "status: shutting down" << std::endl;
-
-    posit::destroyServer(server);
+    server->destroy();
     posit::terminate();
 }
