@@ -22,6 +22,16 @@ int platform()
     return NETCODE_PLATFORM;
 }
 
+int maxClients()
+{
+    return NETCODE_MAX_CLIENTS;
+}
+
+int maxPacketSize()
+{
+    return NETCODE_MAX_PACKET_SIZE;
+}
+
 int initialize()
 {
     return netcode_init();

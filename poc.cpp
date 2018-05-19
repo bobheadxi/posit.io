@@ -36,7 +36,7 @@ static uint8_t privateKey[32] = {0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
 int main(int argc, char **argv)
 {
     // Read arg from command line or use a default
-    char *serverAddress = "127.0.0.1:40000";
+    char *serverAddress = (char *)"127.0.0.1:40000";
     if (argc > 1)
     {
         serverAddress = argv[1];

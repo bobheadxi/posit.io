@@ -7,6 +7,8 @@
 #ifndef POSIT_H
 #define POSIT_H
 
+#include <cstdint>
+
 // Netcode types
 struct netcode_server_t;
 
