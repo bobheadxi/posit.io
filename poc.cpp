@@ -70,8 +70,7 @@ int main(int argc, char **argv)
     // Build test packet data
     int maxPacketSize = posit::maxPacketSize();
     uint8_t packetData[maxPacketSize];
-    int i;
-    for (i = 0; i < posit::maxPacketSize(); ++i)
+    for (int i = 0; i < posit::maxPacketSize(); ++i)
     {
         packetData[i] = (uint8_t)i;
     }
@@ -88,9 +87,8 @@ int main(int argc, char **argv)
             server->sendPacketToClient(0, packetData, maxPacketSize);
         }
 
-        // Verify server recieved packets
-        int clientID;
-        for (clientID = 0; clientID < maxClients; ++clientID)
+        // Verify server received packets
+        for (int clientID = 0; clientID < maxClients; ++clientID)
         {
             while (1)
             {
