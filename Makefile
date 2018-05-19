@@ -1,7 +1,7 @@
 .PHONY: deps docs clean
 
 CC=clang
-CFLAGS=-O
+CFLAGS=-O -I vendor/netcode.io
 LINKFLAGS=-lstdc++
 
 all: deps
@@ -18,12 +18,6 @@ clean:
 
 posit.obj:
 	$(CC) $(CFLAGS) -c posit.cpp -o posit.obj
-
-positd.obj:
-	$(CC) $(CLFAGS) -c posit.cpp -o posit.obj
-
-positd: clean positd.obj posit.obj
-	$(CC) $(CFLAGS) $(LINKFLAGS) -o positd positd.obj posit.obj
 
 #####################
 # PROOF-OF-CONCEPTS #
