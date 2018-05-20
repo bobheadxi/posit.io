@@ -63,11 +63,11 @@ void terminate();
  */
 struct ServerOptions
 {
-    ServerOptions(uint64_t protocolID, uint8_t *privateKey, int keyBytes);
+  ServerOptions(uint64_t protocolID, uint8_t *privateKey, int keyBytes);
 
-    uint64_t protocolID;
-    uint8_t *privateKey;
-    int privateKeyBytes;
+  uint64_t protocolID;
+  uint8_t *privateKey;
+  int privateKeyBytes;
 };
 
 // ---------------------------------------------------------------------------------
@@ -77,21 +77,21 @@ struct ServerOptions
  */
 class Server
 {
-  public:
-    Server(char *address, double time, posit::ServerOptions opts);
-    ~Server();
-    void start(int clients);
-    void update(double time);
-    void destroy();
+public:
+  Server(char *address, double time, posit::ServerOptions opts);
+  ~Server();
+  void start(int clients);
+  void update(double time);
+  void destroy();
 
-    int isClientConnected(int clientID);
+  int isClientConnected(int clientID);
 
-    void sendPacketToClient(int clientID, uint8_t *packetData, int packetLength);
-    uint8_t *receivePacket(int clientID, uint64_t *packetData, int *packetLength);
-    void freePacket(void *packet);
+  void sendPacketToClient(int clientID, uint8_t *packetData, int packetLength);
+  uint8_t *receivePacket(int clientID, uint64_t *packetData, int *packetLength);
+  void freePacket(void *packet);
 
-  private:
-    netcode_server_t *netcodeServer;
+private:
+  netcode_server_t *netcodeServer;
 };
 
 // ---------------------------------------------------------------------------------
