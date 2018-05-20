@@ -1,6 +1,12 @@
-# posit.io executables
+# posit.io objects
 poc
 positd
+
+# cmake
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles
+Makefile
 
 # Prerequisites
 *.d
