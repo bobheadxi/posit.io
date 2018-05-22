@@ -12,6 +12,7 @@ install_manifest.txt
 # IDE
 .idea
 *.dSYM
+*.cbp
 
 # Prerequisites
 *.d
