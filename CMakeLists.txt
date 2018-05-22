@@ -23,7 +23,8 @@ set(POC_SOURCES
 
 # Make targets
 
-install(CODE "execute_process(COMMAND .scripts/setup.sh)")
+add_custom_target(setup 
+        COMMAND bash .scripts/setup.sh)
 
 add_executable(poc
         ${COMMON_SOURCES}

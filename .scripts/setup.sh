@@ -1,7 +1,9 @@
 #!/bin/sh
 
+echo "Seting up submodules..."
 git submodule update --init --recursive vendor
 
+echo "Installing libsodium..."
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     # Linux - @TODO
     echo "Please find out how to install libsodium!"
