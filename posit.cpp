@@ -49,22 +49,22 @@ ServerOptions::ServerOptions(uint64_t setProtocolID, uint8_t *setPrivateKey, int
 {
     this->protocolID = setProtocolID;
     this->privateKeyBytes = setKeyBytes;
-    memcpy(this->privateKey, setPrivateKey, setKeyBytes);
+    this->privateKey = setPrivateKey;
 }
 
 // ---------------------------------------------------------------------------------
 
-Server::Server(char *address, double time, posit::ServerOptions opts)
+Server::Server(char *address, double time, posit::ServerOptions *opts)
 {
     // Set up configuration
-    struct netcode_server_config_t *netConfig;
-    netcode_default_server_config(netConfig);
-    netConfig->protocol_id = opts.protocolID;
-    memcpy(netConfig->private_key, opts.privateKey, opts.privateKeyBytes);
+    struct netcode_server_config_t netConfig;
+    netcode_default_server_config(&netConfig);
+    netConfig.protocol_id = opts->protocolID;
+    memcpy(netConfig.private_key, opts->privateKey, opts->privateKeyBytes);
 
     // Create server
     this->netcodeServer = netcode_server_create(
-        address, netConfig, time);
+        address, &netConfig, time);
 }
 
 Server::~Server()
@@ -74,7 +74,7 @@ Server::~Server()
 
 void Server::start(int clients)
 {
-    netcode_server_start(netcodeServer, clients);
+    netcode_server_start(this->netcodeServer, clients);
 }
 
 void Server::update(double time)

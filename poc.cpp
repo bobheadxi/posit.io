@@ -1,12 +1,8 @@
-/**
- * posit.io proof-of-concepts
- * 
- * @file poc.cpp
- */
-
 #include "posit.h"
 
 #include <iostream>
+#include <memory>
+
 #include <assert.h>
 #include <string.h>
 #include <signal.h>
@@ -27,8 +23,10 @@ void interrupt_handler(int signal)
     quit = 1;
 }
 
-// Verification stuff for server connection
+// Protocol ID defines the game
 #define TEST_PROTOCOL_ID 0x1122334455667788
+
+// Private key for verification
 static uint8_t privateKey[32] = {0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
                                  0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4,
                                  0x43, 0x71, 0xd6, 0x2c, 0xd1, 0x99, 0x27, 0x26,
@@ -37,7 +35,7 @@ static uint8_t privateKey[32] = {0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
 int main(int argc, char **argv)
 {
     std::cout << "Testing libsodium link: " << sodium_init() << std::endl;
-  
+
     // Read arg from command line or use a default
     char *serverAddress = (char *)"127.0.0.1:40000";
     if (argc > 1)
@@ -50,6 +48,7 @@ int main(int argc, char **argv)
     double delta_time = 1.0 / 60.0;
 
     // Set up library. 1 is NETCODE_ERROR.
+    std::cout << "Initializing posit library..." << std::endl;
     if (posit::init() != 1)
     {
         std::cout << "error: initialization failed" << std::endl;
@@ -57,8 +56,12 @@ int main(int argc, char **argv)
     }
 
     // Set up server
-    struct posit::ServerOptions options = posit::ServerOptions(TEST_PROTOCOL_ID, privateKey, 32);
-    struct posit::Server *server = new posit::Server(serverAddress, time, options);
+    std::cout << "Setting up posit::Server..." << std::endl;
+    posit::ServerOptions options = posit::ServerOptions(TEST_PROTOCOL_ID, privateKey, 32);
+    std::unique_ptr<posit::Server> server = std::make_unique<posit::Server>(
+        serverAddress,
+        time,
+        &options);
     if (!server)
     {
         std::cout << "error: failed to create server" << std::endl;
@@ -66,6 +69,7 @@ int main(int argc, char **argv)
     }
 
     // LET'S GO
+    std::cout << "Spinning up server on " << serverAddress << "..." << std::endl;
     int maxClients = posit::maxClients();
     server->start(maxClients);
     signal(SIGINT, interrupt_handler);
@@ -89,8 +93,13 @@ int main(int argc, char **argv)
         {
             server->sendPacketToClient(0, packetData, maxPacketSize);
         }
+        else
+        {
+            std::cout << "No client connected - skipping client packet send";
+        }
 
         // Verify server received packets
+        std::cout << "Testing packet receiving..." << std::endl;
         for (int clientIndex = 0; clientIndex < maxClients; ++clientIndex)
         {
             while (1)

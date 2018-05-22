@@ -78,7 +78,7 @@ struct ServerOptions
 class Server
 {
 public:
-  Server(char *address, double time, posit::ServerOptions opts);
+  Server(char *address, double time, posit::ServerOptions *opts);
   ~Server();
   void start(int clients);
   void update(double time);
