@@ -9,6 +9,10 @@ CMakeFiles
 Makefile
 install_manifest.txt
 
+# IDE
+.idea
+*.dSYM
+
 # Prerequisites
 *.d
 
