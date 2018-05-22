@@ -4,8 +4,11 @@ project(posit)
 # Flags and settings
 
 set(CMAKE_CXX_STANDARD 14)
-set(COMPILE_FLAGS "-I/usr/local/include")
-set(LINKER_FLAGS "-lstdc++ -L/usr/local/lib -lsodium")
+set(CXXFLAGS "-I/usr/local/include")
+set(LDFLAGS "-lstdc++ -L/usr/local/lib -lsodium")
+
+set(CMAKE_CXX_FLAGS "${CXXFLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${LDFLAGS}")
 
 # Source files
 
@@ -20,7 +23,7 @@ set(POC_SOURCES
 
 # Make targets
 
-install(CODE "execute_process(COMMAND .scripts/install.sh)")
+install(CODE "execute_process(COMMAND .scripts/setup.sh)")
 
 add_executable(poc
         ${COMMON_SOURCES}
