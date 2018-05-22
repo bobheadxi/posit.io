@@ -6,6 +6,7 @@
 
 #include "posit.h"
 #include <cstring>
+#include <iostream>
 
 extern "C"
 {
@@ -32,7 +33,7 @@ int maxPacketSize()
     return NETCODE_MAX_PACKET_SIZE;
 }
 
-int initialize()
+int init()
 {
     return netcode_init();
 }

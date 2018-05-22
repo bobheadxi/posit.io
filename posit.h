@@ -48,7 +48,7 @@ int maxPacketSize();
  * Sets up posit.
  * @returns int 
  */
-int initialize();
+int init();
 
 /**
  * Cleans up posit..

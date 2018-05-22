@@ -6,7 +6,6 @@
 
 #include "posit.h"
 
-#include <stdio.h>
 #include <iostream>
 #include <assert.h>
 #include <string.h>
@@ -50,8 +49,8 @@ int main(int argc, char **argv)
     double time = 0.0;
     double delta_time = 1.0 / 60.0;
 
-    // Set up library
-    if (posit::initialize() != 0)
+    // Set up library. 1 is NETCODE_ERROR.
+    if (posit::init() != 1)
     {
         std::cout << "error: initialization failed" << std::endl;
         return 1;
