@@ -88,13 +88,13 @@ int main(int argc, char **argv)
         }
 
         // Verify server received packets
-        for (int clientID = 0; clientID < maxClients; ++clientID)
+        for (int clientIndex = 0; clientIndex < maxClients; ++clientIndex)
         {
             while (1)
             {
                 int packetBytes;
                 uint64_t packetSequence;
-                void *packet = server->receivePacket(clientID, &packetSequence, &packetBytes);
+                void *packet = server->receivePacket(clientIndex, &packetSequence, &packetBytes);
                 if (!packet)
                 {
                     break;

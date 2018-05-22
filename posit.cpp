@@ -86,23 +86,23 @@ void Server::destroy()
     netcode_server_destroy(this->netcodeServer);
 }
 
-int Server::isClientConnected(int clientID)
+int Server::isClientConnected(int clientIndex)
 {
     return netcode_server_client_connected(
         this->netcodeServer,
-        clientID);
+        clientIndex);
 }
 
-void Server::sendPacketToClient(int clientID, uint8_t *packetData, int packetLength)
+void Server::sendPacketToClient(int clientIndex, uint8_t *packetData, int packetLength)
 {
-    netcode_server_send_packet(this->netcodeServer, clientID, packetData, packetLength);
+    netcode_server_send_packet(this->netcodeServer, clientIndex, packetData, packetLength);
 }
 
-uint8_t *Server::receivePacket(int clientID, uint64_t *packetData, int *packetLength)
+uint8_t *Server::receivePacket(int clientIndex, uint64_t *packetData, int *packetLength)
 {
     return netcode_server_receive_packet(
         this->netcodeServer,
-        clientID,
+        clientIndex,
         packetLength,
         packetData);
 }
@@ -114,7 +114,7 @@ void Server::freePacket(void *packet)
 
 // ---------------------------------------------------------------------------------
 
-void sendPacketToServer(posit::Server *server, int clientID, uint8_t packetData, int packetBytes)
+void sendPacketToServer(posit::Server *server, int clientIndex, uint8_t packetData, int packetBytes)
 {
 
 }
