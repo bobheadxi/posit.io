@@ -1,6 +1,11 @@
 {
     "files.associations": {
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "locale": "cpp",
+        "string": "cpp",
+        "memory": "cpp",
+        "__locale": "cpp",
+        "chrono": "cpp"
     },
     "doxdocgen.generic.authorTag": "",
     "doxdocgen.generic.dateTemplate": "",
