@@ -57,9 +57,12 @@ int main(int argc, char **argv)
 
     // Set up server
     std::cout << "Setting up posit::Server..." << std::endl;
-    posit::ServerOptions options = posit::ServerOptions(TEST_PROTOCOL_ID, privateKey, 32);
+    posit::ProtocolOptions options = posit::ProtocolOptions(
+        TEST_PROTOCOL_ID);
     std::unique_ptr<posit::Server> server = std::make_unique<posit::Server>(
         serverAddress,
+        privateKey,
+        32,
         time,
         &options);
     if (!server)

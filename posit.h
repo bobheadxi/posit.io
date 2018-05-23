@@ -59,15 +59,15 @@ void terminate();
 // ---------------------------------------------------------------------------------
 
 /**
- * Declares configuration for posit server.
+ * Declares configuration for posit server. This will contain all configuration
+ * pertaining to the game - movement schemas, entities, hook subscriptions, etc.
+ * For now, only holds protocol ID.
  */
-struct ServerOptions
+struct ProtocolOptions
 {
-  ServerOptions(uint64_t protocolID, uint8_t *privateKey, int keyBytes);
+  ProtocolOptions(uint64_t protocolID);
 
   uint64_t protocolID;
-  uint8_t *privateKey;
-  int privateKeyBytes;
 };
 
 // ---------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ struct ServerOptions
 class Server
 {
 public:
-  Server(char *address, double time, posit::ServerOptions *opts);
+  Server(char *address, uint8_t *privateKey, int keyBytes, double time, posit::ProtocolOptions *opts);
   ~Server();
   void start(int clients);
   void update(double time);

@@ -45,22 +45,20 @@ void terminate()
 
 // ---------------------------------------------------------------------------------
 
-ServerOptions::ServerOptions(uint64_t setProtocolID, uint8_t *setPrivateKey, int setKeyBytes)
+ProtocolOptions::ProtocolOptions(uint64_t setProtocolID)
 {
     this->protocolID = setProtocolID;
-    this->privateKeyBytes = setKeyBytes;
-    this->privateKey = setPrivateKey;
 }
 
 // ---------------------------------------------------------------------------------
 
-Server::Server(char *address, double time, posit::ServerOptions *opts)
+Server::Server(char *address, uint8_t *privateKey, int keyBytes, double time, posit::ProtocolOptions *opts)
 {
     // Set up configuration
     struct netcode_server_config_t netConfig;
     netcode_default_server_config(&netConfig);
     netConfig.protocol_id = opts->protocolID;
-    memcpy(netConfig.private_key, opts->privateKey, opts->privateKeyBytes);
+    memcpy(netConfig.private_key, privateKey, keyBytes);
 
     // Create server
     this->netcodeServer = netcode_server_create(
@@ -69,7 +67,8 @@ Server::Server(char *address, double time, posit::ServerOptions *opts)
 
 Server::~Server()
 {
-    this->destroy();
+    // This should be manually called by the creator.
+    // this->destroy();
 }
 
 void Server::start(int clients)
