@@ -33,6 +33,11 @@ int maxPacketSize()
     return NETCODE_MAX_PACKET_SIZE;
 }
 
+void logLevel(int level)
+{
+    netcode_log_level(level);
+}
+
 int init()
 {
     return netcode_init();
@@ -45,16 +50,28 @@ void terminate()
 
 // ---------------------------------------------------------------------------------
 
-ProtocolOptions::ProtocolOptions(uint64_t setProtocolID)
+ProtocolOptions::ProtocolOptions(uint64_t setProtocolID, int clients)
 {
     this->protocolID = setProtocolID;
+    this->clients = clients;
 }
 
 // ---------------------------------------------------------------------------------
 
-Server::Server(char *address, uint8_t *privateKey, int keyBytes, double time, posit::ProtocolOptions *opts)
-{
-    // Set up configuration
+Server::Server(
+    char *address,
+    uint8_t *privateKey,
+    int keyBytes,
+    double time,
+    double delta_time,
+    posit::ProtocolOptions *opts
+) {
+    // Set up properties
+    this->time = time;
+    this->delta_time = delta_time;
+    this->clients = opts->clients;
+
+    // Set up netcode configuration
     struct netcode_server_config_t netConfig;
     netcode_default_server_config(&netConfig);
     netConfig.protocol_id = opts->protocolID;
@@ -63,6 +80,12 @@ Server::Server(char *address, uint8_t *privateKey, int keyBytes, double time, po
     // Create server
     this->netcodeServer = netcode_server_create(
         address, &netConfig, time);
+
+    // Check if successful
+    if (!this->netcodeServer)
+    {
+        throw 1;
+    }
 }
 
 Server::~Server()
@@ -71,20 +94,63 @@ Server::~Server()
     // this->destroy();
 }
 
-void Server::start(int clients)
-{
-    netcode_server_start(this->netcodeServer, clients);
-}
-
-void Server::update(double time)
-{
-    netcode_server_update(this->netcodeServer, time);
-}
-
 void Server::destroy()
 {
     netcode_server_destroy(this->netcodeServer);
 }
+
+void Server::listenAndServe(volatile int *quit)
+{
+    this->start();
+    while (!*quit)
+    {
+        // Tick
+        this->update();
+
+        // @TODO: Check if client is connected, and attempt to send packet something
+        // in a configurable manner
+        std::cout << "No client connected - skipping client packet send\n";
+
+        // Receive packets from all connected clients
+        for (int clientIndex = 0; clientIndex < this->clients; ++clientIndex)
+        {
+            while (1)
+            {
+                int packetBytes;
+                uint64_t packetSequence;
+                void *packet = this->receivePacket(clientIndex, &packetSequence, &packetBytes);
+                if (!packet)
+                {
+                    break;
+                }
+                (void)packetSequence;
+
+                // @TODO: do things with packets
+                if (packetBytes > 0) {
+                    std::cout << "Received: " << packet << std::endl;
+                }
+
+                this->freePacket(packet);
+            }
+        }
+
+        // Wait a moment before repeating
+        sleep(this->delta_time);
+        this->time += this->delta_time;
+    }
+}
+
+void Server::start()
+{
+    std::cout << (this->netcodeServer) << std::endl;
+    netcode_server_start(this->netcodeServer, this->clients);
+}
+
+void Server::update()
+{
+    netcode_server_update(this->netcodeServer, this->time);
+}
+
 
 int Server::isClientConnected(int clientIndex)
 {
@@ -113,11 +179,6 @@ void Server::freePacket(void *packet)
 }
 
 // ---------------------------------------------------------------------------------
-
-void sendPacketToServer(posit::Server *server, int clientIndex, uint8_t packetData, int packetBytes)
-{
-
-}
 
 void sleep(double seconds)
 {

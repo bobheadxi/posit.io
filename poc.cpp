@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <memory>
+#include <thread>
 
 #include <assert.h>
 #include <string.h>
@@ -37,17 +38,13 @@ int main(int argc, char **argv)
     std::cout << "Testing libsodium link: " << sodium_init() << std::endl;
 
     // Read arg from command line or use a default
-    char *serverAddress = (char *)"127.0.0.1:40000";
+    char *serverAddress = (char *)"127.0.0.1:40001";
     if (argc > 1)
     {
         serverAddress = argv[1];
     }
 
-    // Set up time-related constants
-    double time = 0.0;
-    double delta_time = 1.0 / 60.0;
-
-    // Set up library. 1 is NETCODE_ERROR.
+    // Set up library. 1 is NETCODE_OK.
     std::cout << "Initializing posit library..." << std::endl;
     if (posit::init() != 1)
     {
@@ -55,29 +52,44 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    // Give me all the logs
+    posit::logLevel(posit::LOG_LEVEL_DEBUG);
+
     // Set up server
     std::cout << "Setting up posit::Server..." << std::endl;
+    // Protocol (game) configuration
     posit::ProtocolOptions options = posit::ProtocolOptions(
-        TEST_PROTOCOL_ID);
-    std::unique_ptr<posit::Server> server = std::make_unique<posit::Server>(
-        serverAddress,
-        privateKey,
-        32,
-        time,
-        &options);
-    if (!server)
+        TEST_PROTOCOL_ID, posit::maxClients());
+    double time = 0.0;
+    // Frame time (1/60th of a second)
+    double delta_time = 1.0 / 60.0;
+    std::unique_ptr<posit::Server> server;
+    try
+    {
+        server = std::make_unique<posit::Server>(
+                serverAddress,
+                privateKey,
+                32,
+                time,
+                delta_time,
+                &options);
+    }
+    catch (int e)
     {
         std::cout << "error: failed to create server" << std::endl;
-        return 1;
+        return e;
     }
 
-    // LET'S GO
-    std::cout << "Spinning up server on " << serverAddress << "..." << std::endl;
-    int maxClients = posit::maxClients();
-    server->start(maxClients);
+    // Stop server when SIGINT
     signal(SIGINT, interrupt_handler);
 
+    // LET'S GO
+    std::cout << "Spinning up server..." << std::endl;
+    std::thread serve(&posit::Server::listenAndServe, server.get(), &quit);   
+    std::cout << "Posit listening on " << serverAddress << std::endl;
+
     // Build test packet data
+    // @TODO: use to send stuff
     int maxPacketSize = posit::maxPacketSize();
     uint8_t packetData[maxPacketSize];
     for (int i = 0; i < posit::maxPacketSize(); ++i)
@@ -85,49 +97,7 @@ int main(int argc, char **argv)
         packetData[i] = (uint8_t)i;
     }
 
-    // Spin until you rudely interrupt as always
-    while (!quit)
-    {
-        // Tick
-        server->update(time);
-
-        // Check if client is connected, and attempt to send packet
-        if (server->isClientConnected(0))
-        {
-            server->sendPacketToClient(0, packetData, maxPacketSize);
-        }
-        else
-        {
-            std::cout << "No client connected - skipping client packet send";
-        }
-
-        // Verify server received packets
-        std::cout << "Testing packet receiving..." << std::endl;
-        for (int clientIndex = 0; clientIndex < maxClients; ++clientIndex)
-        {
-            while (1)
-            {
-                int packetBytes;
-                uint64_t packetSequence;
-                void *packet = server->receivePacket(clientIndex, &packetSequence, &packetBytes);
-                if (!packet)
-                {
-                    break;
-                }
-                (void)packetSequence;
-
-                // Checks
-                assert(packetBytes == maxPacketSize);
-                assert(memcmp(packet, packetData, maxPacketSize) == 0);
-
-                server->freePacket(packet);
-            }
-        }
-
-        // Wait a moment before repeating
-        posit::sleep(delta_time);
-        time += delta_time;
-    }
+    serve.join();
 
     // Goodbye world
     std::cout << "status: shutting down" << std::endl;
