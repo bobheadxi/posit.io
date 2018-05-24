@@ -1,6 +1,9 @@
-# posit.io objects
-poc
-positd
+# objects
+bin
+*.slo
+*.lo
+*.o
+*.obj
 
 # cmake
 cmake_install.cmake
@@ -9,6 +12,10 @@ CMakeFiles
 Makefile
 install_manifest.txt
 
+# test stuff
+gmock*
+gtest*
+
 # IDE
 .idea
 *.dSYM
@@ -16,12 +23,6 @@ install_manifest.txt
 
 # Prerequisites
 *.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
 
 # Precompiled Headers
 *.gch

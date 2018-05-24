@@ -1,14 +1,12 @@
-#include "posit.h"
-
 #include <iostream>
 #include <memory>
-
 #include <assert.h>
 #include <string.h>
 #include <signal.h>
 #include <inttypes.h>
-
 #include <sodium.h>
+
+#include "posit.h"
 
 // Indicates if an interrupt request has been sent
 static volatile int quit = 0;

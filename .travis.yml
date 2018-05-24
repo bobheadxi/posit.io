@@ -1,2 +1,32 @@
 notifications:
   email: false
+
+language: cpp
+install: true
+sudo: required
+compiler:
+  - clang
+
+# The following additions force more modern lstdc++ libs
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-trusty-5.0
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-5.0
+      - g++-7
+env:
+  - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+
+install:
+ - bash scripts/setup.sh
+ - sudo ln -s /usr/local/lib/libsodium.so.23 /usr/lib/libsodium.so.23 # workaround
+
+script:
+ - mkdir bin ; cmake .
+ - make VERBOSE=1
+ - ./bin/tests
