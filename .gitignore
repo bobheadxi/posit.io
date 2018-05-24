@@ -1,8 +1,9 @@
 # objects
 bin
-poc
-test
-positd
+*.slo
+*.lo
+*.o
+*.obj
 
 # cmake
 cmake_install.cmake
@@ -22,12 +23,6 @@ gtest*
 
 # Prerequisites
 *.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
 
 # Precompiled Headers
 *.gch

@@ -9,6 +9,7 @@ set(LDFLAGS "-lstdc++ -L/usr/local/lib -lsodium")
 
 set(CMAKE_CXX_FLAGS "${CXXFLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${LDFLAGS}")
+set(EXECUTABLE_OUTPUT_PATH "bin")
 
 # Source files
 

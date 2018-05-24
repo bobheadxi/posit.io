@@ -23,5 +23,12 @@ To try the current proof-of-concept demonstration:
 
 ```bash
 make poc
-./poc
+./bin/poc
+```
+
+To test:
+
+```bash
+make test
+./bin/test
 ```
