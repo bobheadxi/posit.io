@@ -15,6 +15,7 @@ set(EXECUTABLE_OUTPUT_PATH "bin")
 # Source files
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/demo)
 add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/googletest/)
 
 set(COMMON_SOURCES
@@ -24,8 +25,10 @@ set(COMMON_SOURCES
 set(TEST_SOURCES
         posit_test.cpp)
 
-set(POC_SOURCES
-        poc.cpp)
+set(DEMO_SOURCES
+        demo.cpp
+        demo/server.cpp
+        demo/client.c)
 
 # Make targets
 
@@ -37,6 +40,6 @@ add_executable(tests
         ${TEST_SOURCES})
 target_link_libraries(tests gtest_main)
 
-add_executable(poc
+add_executable(demo
         ${COMMON_SOURCES}
-        ${POC_SOURCES})
+        ${DEMO_SOURCES})

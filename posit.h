@@ -75,10 +75,10 @@ void terminate();
  */
 struct ProtocolOptions
 {
-  ProtocolOptions(uint64_t protocolID, int clients);
+  ProtocolOptions(uint64_t protocolID, int maxClients);
 
   uint64_t protocolID;
-  int clients;
+  int maxClients;
 };
 
 // ---------------------------------------------------------------------------------
@@ -111,8 +111,8 @@ private:
 
   netcode_server_t *netcodeServer;
   double time;
-  double delta_time;
-  int clients;
+  double deltaTime;
+  int maxClients;
 };
 
 // ---------------------------------------------------------------------------------

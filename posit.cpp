@@ -51,10 +51,10 @@ void terminate()
 
 // ---------------------------------------------------------------------------------
 
-ProtocolOptions::ProtocolOptions(uint64_t setProtocolID, int clients)
+ProtocolOptions::ProtocolOptions(uint64_t setProtocolID, int maxClients)
 {
     this->protocolID = setProtocolID;
-    this->clients = clients;
+    this->maxClients = maxClients;
 }
 
 // ---------------------------------------------------------------------------------
@@ -64,23 +64,23 @@ Server::Server(
     uint8_t *privateKey,
     int keyBytes,
     double time,
-    double delta_time,
+    double deltaTime,
     posit::ProtocolOptions *opts)
 {
     // Set up properties
     this->time = time;
-    this->delta_time = delta_time;
-    this->clients = opts->clients;
+    this->deltaTime = deltaTime;
+    this->maxClients = opts->maxClients;
 
     // Set up netcode configuration
-    struct netcode_server_config_t netConfig;
-    netcode_default_server_config(&netConfig);
-    netConfig.protocol_id = opts->protocolID;
-    memcpy(netConfig.private_key, privateKey, keyBytes);
+    struct netcode_server_config_t netcodeServerConfig;
+    netcode_default_server_config(&netcodeServerConfig);
+    netcodeServerConfig.protocol_id = opts->protocolID;
+    memcpy(&netcodeServerConfig.private_key, privateKey, keyBytes);
 
     // Create server
     this->netcodeServer = netcode_server_create(
-        address, &netConfig, time);
+        address, &netcodeServerConfig, time);
 
     // Check if successful
     if (!this->netcodeServer)
@@ -110,10 +110,13 @@ void Server::listenAndServe(volatile int *quit)
 
         // @TODO: Check if client is connected, and attempt to send packet something
         // in a configurable manner
-        std::cout << "No client connected - skipping client packet send\n";
+        // if (this->isClientConnected(0))
+        // {
+        //     this->sendPacketToClient(0, packetData, NETCODE_MAX_PACKET_SIZE);
+        // }
 
         // Receive packets from all connected clients
-        for (int clientIndex = 0; clientIndex < this->clients; ++clientIndex)
+        for (int clientIndex = 0; clientIndex < this->maxClients; ++clientIndex)
         {
             while (1)
             {
@@ -137,15 +140,14 @@ void Server::listenAndServe(volatile int *quit)
         }
 
         // Wait a moment before repeating
-        sleep(this->delta_time);
-        this->time += this->delta_time;
+        sleep(this->deltaTime);
+        this->time += this->deltaTime;
     }
 }
 
 void Server::start()
 {
-    std::cout << (this->netcodeServer) << std::endl;
-    netcode_server_start(this->netcodeServer, this->clients);
+    netcode_server_start(this->netcodeServer, this->maxClients);
 }
 
 void Server::update()
