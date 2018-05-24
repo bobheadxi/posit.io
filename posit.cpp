@@ -4,13 +4,14 @@
  * @file posit.cpp
  */
 
-#include "posit.h"
 #include <cstring>
 #include <iostream>
 
+#include "posit.h"
+
 extern "C"
 {
-#include "vendor/netcode.io/netcode.h"
+#include "include/netcode.io/netcode.h"
 }
 
 namespace posit

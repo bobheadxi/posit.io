@@ -3,11 +3,17 @@
 </p>
 
 <p align="center">
-    <a href="https://paper.dropbox.com/doc/Design-Doc-R9JoiXDIBrOyNw0Nwz18c"><strong>Design Document</strong></a>
-    ·
-    <a href="https://github.com/bobheadxi/posit.io/milestones"><strong>Milestones</strong></a>
-    ·
-    <a href="#hammer-building"><strong>Building</strong></a>
+  <a href="https://travis-ci.com/bobheadxi/posit.io">
+    <img src="https://travis-ci.com/bobheadxi/posit.io.svg?token=yjpN8EDzhK3qYaBpZzZc&branch=master" alt="Travis Builds" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://paper.dropbox.com/doc/Design-Doc-R9JoiXDIBrOyNw0Nwz18c"><strong>Design Document</strong></a>
+  ·
+  <a href="https://github.com/bobheadxi/posit.io/milestones"><strong>Milestones</strong></a>
+  ·
+  <a href="#hammer-building"><strong>Building</strong></a>
 </p>
 
 <br/>
@@ -23,5 +29,12 @@ To try the current proof-of-concept demonstration:
 
 ```bash
 make poc
-./poc
+./bin/poc
+```
+
+To execute tests:
+
+```bash
+make tests
+./bin/tests
 ```
