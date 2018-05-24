@@ -90,12 +90,12 @@ class Server
 {
 public:
   Server(
-    char *address,
-    uint8_t *privateKey,
-    int keyBytes,
-    double time,
-    double delta_time,
-    posit::ProtocolOptions *opts);
+      char *address,
+      uint8_t *privateKey,
+      int keyBytes,
+      double time,
+      double delta_time,
+      posit::ProtocolOptions *opts);
   ~Server();
   void listenAndServe(volatile int *quit);
   void destroy();

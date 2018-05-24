@@ -65,8 +65,8 @@ Server::Server(
     int keyBytes,
     double time,
     double delta_time,
-    posit::ProtocolOptions *opts
-) {
+    posit::ProtocolOptions *opts)
+{
     // Set up properties
     this->time = time;
     this->delta_time = delta_time;
@@ -127,7 +127,8 @@ void Server::listenAndServe(volatile int *quit)
                 (void)packetSequence;
 
                 // @TODO: do things with packets
-                if (packetBytes > 0) {
+                if (packetBytes > 0)
+                {
                     std::cout << "Received: " << packet << std::endl;
                 }
 
@@ -151,7 +152,6 @@ void Server::update()
 {
     netcode_server_update(this->netcodeServer, this->time);
 }
-
 
 int Server::isClientConnected(int clientIndex)
 {
