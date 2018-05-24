@@ -1,5 +1,7 @@
-# posit.io objects
+# objects
+bin
 poc
+test
 positd
 
 # cmake
@@ -8,6 +10,10 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 install_manifest.txt
+
+# test stuff
+gmock*
+gtest*
 
 # IDE
 .idea

@@ -12,19 +12,28 @@ set(CMAKE_EXE_LINKER_FLAGS "${LDFLAGS}")
 
 # Source files
 
-include_directories(${PROJECT_SOURCE_DIR}/vendor)
+include_directories(${PROJECT_SOURCE_DIR}/include)
+add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/googletest/)
 
 set(COMMON_SOURCES
         posit.cpp
-        vendor/netcode.io/netcode.c)
+        include/netcode.io/netcode.c)
+
+set(TEST_SOURCES
+        posit_test.cpp)
 
 set(POC_SOURCES
         poc.cpp)
 
 # Make targets
 
-add_custom_target(setup 
+add_custom_target(update
         COMMAND bash .scripts/setup.sh)
+
+add_executable(test
+        ${COMMON_SOURCES}
+        ${TEST_SOURCES})
+target_link_libraries(test gtest_main)
 
 add_executable(poc
         ${COMMON_SOURCES}
