@@ -20,6 +20,12 @@ int demo_clientStart(const char *serverAddress, uint64_t protocolID, uint8_t *pr
         return 1;
     }
 
+    printf("Your key:\n");
+    for(int i = 0; i < 31; i++) {
+        printf("%d ", privateKey[i]);
+    }
+    printf("\n");
+
     // Give me all the logs
     netcode_log_level(NETCODE_LOG_LEVEL_DEBUG);
 
@@ -28,7 +34,8 @@ int demo_clientStart(const char *serverAddress, uint64_t protocolID, uint8_t *pr
     double deltaTime = 1.0 / 60.0; // frame rate (60/s)
     struct netcode_client_config_t clientConfig;
     netcode_default_client_config(&clientConfig);
-    struct netcode_client_t *client = netcode_client_create("::", &clientConfig, time);
+    struct netcode_client_t *client = netcode_client_create(
+        "0.0.0.0", &clientConfig, time);
     if (!client)
     {
         printf("error: failed to create client\n");
@@ -43,16 +50,16 @@ int demo_clientStart(const char *serverAddress, uint64_t protocolID, uint8_t *pr
     // Generate connect token
     uint8_t connectToken[NETCODE_CONNECT_TOKEN_BYTES];
     int tokenCreateStatus = netcode_generate_connect_token(
-        1,                                     // num_server_addresses
-        (NETCODE_CONST char**)&serverAddress,  // public addresses
-        (NETCODE_CONST char**)&serverAddress,  // internal addresses
-        CONNECT_TOKEN_EXPIRY,                  // epiry seconds
-        CONNECT_TOKEN_TIMEOUT,                 // timeout seconds
-        clientID,                              // client ID
-        protocolID,                            // protocol
-        0,                                     // sequence
-        (NETCODE_CONST uint8_t*)privateKey,    // encrypt key
-        connectToken);                         // connect token
+        1,                      // number of server addresses
+        &serverAddress,         // public addresses
+        &serverAddress,         // internal addresses
+        CONNECT_TOKEN_EXPIRY,   // epiry seconds
+        CONNECT_TOKEN_TIMEOUT,  // timeout seconds
+        clientID,               // client ID
+        protocolID,             // protocol
+        0,                      // sequence
+        privateKey,             // encrypt key
+        connectToken);          // connect token
     if (tokenCreateStatus != NETCODE_OK)
     {
         printf("error: failed to generate connect token\n");

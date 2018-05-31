@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cstring>
 #include <csignal>
+#include <cstdint>
 
 #include "../posit.hpp"
 
@@ -13,12 +14,17 @@ int demo_positServerStart(char *serverAddress, uint64_t protocolID, uint8_t *pri
     std::cout << "Preparing posit server" << std::endl;
 
     // Set up library. 1 is NETCODE_OK.
-    std::cout << "Initializing posit library..." << std::endl;
     if (posit::init() != 1)
     {
         std::cout << "error: initialization failed" << std::endl;
         return 1;
     }
+
+    std::cout << "Your key: " << std::endl;
+    for(int i = 0; i < 31; i++) {
+        std::cout << +privateKey[i] << " ";
+    }
+    std::cout << std::endl;
 
     // Give me all the logs
     posit::logLevel(posit::LOG_LEVEL_DEBUG);
@@ -31,7 +37,7 @@ int demo_positServerStart(char *serverAddress, uint64_t protocolID, uint8_t *pri
     double deltaTime = 1.0 / 60.0;
     double time = 0.0;
 
-    std::cout << "Initializing server..." << std::endl; 
+    // Set up server
     std::unique_ptr<posit::Server> server;
     try
     {
@@ -50,15 +56,12 @@ int demo_positServerStart(char *serverAddress, uint64_t protocolID, uint8_t *pri
     }
 
     // LET'S GO
-    std::cout << "Spinning up server..." << std::endl;
     std::thread serve(&posit::Server::listenAndServe, server.get(), quit);
-    std::cout << "Posit listening on " << serverAddress << std::endl;
 
     // Wait for exit
     serve.join();
 
     // Goodbye world
-    std::cout << "status: shutting down" << std::endl;
     server->destroy();
     posit::terminate();
     return 0;

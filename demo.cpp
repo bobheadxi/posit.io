@@ -5,7 +5,7 @@
 #include <cassert>
 #include <cstring>
 #include <csignal>
-#include <cinttypes>
+#include <cstdint>
 #include <sodium.h>
 
 #include "demo/server.hpp"
@@ -27,9 +27,6 @@ void interrupt_handler(int signal)
     quit = 1;
 }
 
-// Protocol ID defines the game
-#define TEST_PROTOCOL_ID 0x1122334455667788
-
 // Private key for verification
 static uint8_t privateKey[32] = {0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
                                  0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4,
@@ -41,16 +38,17 @@ int main(int argc, char **argv)
     if (argc < 2)
     {
         std::cout << "Insufficient arguments (specify 'client' or 'server')" << std::endl;
-        return 1;
+        return 0;
     }
 
     // Read arg from command line or use a default
-    char *serverAddress = (argc != 3) ? (char *)"[::1]:40000" : argv[2];
+    char *serverAddress = (argc != 3) ? (char *)"127.0.0.1:40000" : argv[2];
 
     // Stop process when SIGINT
     signal(SIGINT, interrupt_handler);
 
     // Start appropriate process
+    #define TEST_PROTOCOL_ID 0x1122334455667788
     if (std::strcmp(argv[1], "server") == 0)
     {
         return demo_positServerStart(serverAddress, TEST_PROTOCOL_ID, privateKey, &quit);
