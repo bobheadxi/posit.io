@@ -20,6 +20,7 @@ gtest*
 .idea
 *.dSYM
 *.cbp
+.vscode
 
 # Prerequisites
 *.d
