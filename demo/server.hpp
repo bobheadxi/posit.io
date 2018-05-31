@@ -1,6 +1,8 @@
 
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
+#include <cinttypes>
 
 /**
  * Spin up a demo Posit instance
@@ -12,4 +14,4 @@
  */
 int demo_positServerStart(char *serverAddress, uint64_t protocolID, uint8_t *privateKey, volatile int *quit);
 
-#endif // #ifndef SERVER_H
+#endif // #ifndef SERVER_HPP

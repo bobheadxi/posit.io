@@ -7,7 +7,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "posit.h"
+#include "posit.hpp"
 
 extern "C"
 {

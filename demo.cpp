@@ -8,7 +8,7 @@
 #include <cinttypes>
 #include <sodium.h>
 
-#include "demo/server.h"
+#include "demo/server.hpp"
 extern "C"
 {
 #include "demo/client.h"

@@ -1,4 +1,4 @@
-#include "posit.h"
+#include "posit.hpp"
 
 #include <gtest/gtest.h>
 

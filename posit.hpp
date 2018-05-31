@@ -4,8 +4,8 @@
  * @file posit.h
  */
 
-#ifndef POSIT_H
-#define POSIT_H
+#ifndef POSIT_HPP
+#define POSIT_HPP
 
 #include <cstdint>
 
@@ -129,4 +129,4 @@ void sleep(double seconds);
  * @} End namespace posit documentation
  */
 
-#endif // #ifndef POSIT_H
+#endif // #ifndef POSIT_HPP

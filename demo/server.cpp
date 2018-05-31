@@ -5,9 +5,8 @@
 #include <cassert>
 #include <cstring>
 #include <csignal>
-#include <cinttypes>
 
-#include "../posit.h"
+#include "../posit.hpp"
 
 int demo_positServerStart(char *serverAddress, uint64_t protocolID, uint8_t *privateKey, volatile int *quit)
 {
