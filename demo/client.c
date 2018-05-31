@@ -79,7 +79,7 @@ int demo_clientStart(const char *serverAddress, uint64_t protocolID, uint8_t *pr
     }
 
     // Spin up client
-    while (!quit)
+    while (!*quit)
     {
         netcode_client_update(client, time);
 
