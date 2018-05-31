@@ -102,12 +102,12 @@ public:
 
   int isClientConnected(int clientID);
   void sendPacketToClient(int clientID, uint8_t *packetData, int packetLength);
-  uint8_t *receivePacket(int clientID, uint64_t *packetData, int *packetLength);
-  void freePacket(void *packet);
 
 private:
   void start();
   void update();
+  uint8_t *receivePacket(int clientID, uint64_t *packetData, int *packetLength);
+  void freePacket(void *packet);
 
   netcode_server_t *netcodeServer;
   double time;
