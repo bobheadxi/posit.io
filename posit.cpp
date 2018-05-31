@@ -7,7 +7,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "posit.h"
+#include "posit.hpp"
 
 extern "C"
 {
@@ -34,6 +34,11 @@ int maxPacketSize()
     return NETCODE_MAX_PACKET_SIZE;
 }
 
+void logLevel(int level)
+{
+    netcode_log_level(level);
+}
+
 int init()
 {
     return netcode_init();
@@ -46,46 +51,108 @@ void terminate()
 
 // ---------------------------------------------------------------------------------
 
-ServerOptions::ServerOptions(uint64_t setProtocolID, uint8_t *setPrivateKey, int setKeyBytes)
+ProtocolOptions::ProtocolOptions(uint64_t setProtocolID, int maxClients)
 {
     this->protocolID = setProtocolID;
-    this->privateKeyBytes = setKeyBytes;
-    this->privateKey = setPrivateKey;
+    this->maxClients = maxClients;
 }
 
 // ---------------------------------------------------------------------------------
 
-Server::Server(char *address, double time, posit::ServerOptions *opts)
+Server::Server(
+    char *address,
+    uint8_t *privateKey,
+    int keyBytes,
+    double time,
+    double deltaTime,
+    posit::ProtocolOptions *opts)
 {
-    // Set up configuration
-    struct netcode_server_config_t netConfig;
-    netcode_default_server_config(&netConfig);
-    netConfig.protocol_id = opts->protocolID;
-    memcpy(netConfig.private_key, opts->privateKey, opts->privateKeyBytes);
+    // Set up properties
+    this->time = time;
+    this->deltaTime = deltaTime;
+    this->maxClients = opts->maxClients;
+
+    // Set up netcode configuration
+    struct netcode_server_config_t netcodeServerConfig;
+    netcode_default_server_config(&netcodeServerConfig);
+    netcodeServerConfig.protocol_id = opts->protocolID;
+    memcpy(&netcodeServerConfig.private_key, privateKey, keyBytes);
 
     // Create server
     this->netcodeServer = netcode_server_create(
-        address, &netConfig, time);
+        address, &netcodeServerConfig, time);
+
+    // Check if successful
+    if (!this->netcodeServer)
+    {
+        throw 1;
+    }
 }
 
 Server::~Server()
 {
-    this->destroy();
-}
-
-void Server::start(int clients)
-{
-    netcode_server_start(this->netcodeServer, clients);
-}
-
-void Server::update(double time)
-{
-    netcode_server_update(this->netcodeServer, time);
+    // This should be manually called by the creator.
+    // this->destroy();
 }
 
 void Server::destroy()
 {
     netcode_server_destroy(this->netcodeServer);
+}
+
+void Server::listenAndServe(volatile int *quit)
+{
+    this->start();
+    while (!*quit)
+    {
+        // Tick
+        this->update();
+
+        // @TODO: Check if client is connected, and attempt to send packet something
+        // in a configurable manner
+        // if (this->isClientConnected(0))
+        // {
+        //     this->sendPacketToClient(0, packetData, NETCODE_MAX_PACKET_SIZE);
+        // }
+
+        // Receive packets from all connected clients
+        for (int clientIndex = 0; clientIndex < this->maxClients; ++clientIndex)
+        {
+            while (1)
+            {
+                int packetBytes;
+                uint64_t packetSequence;
+                void *packet = this->receivePacket(clientIndex, &packetSequence, &packetBytes);
+                if (!packet)
+                {
+                    break;
+                }
+                (void)packetSequence;
+
+                // @TODO: do things with packets
+                if (packetBytes > 0)
+                {
+                    std::cout << "Received: " << packet << std::endl;
+                }
+
+                this->freePacket(packet);
+            }
+        }
+
+        // Wait a moment before repeating
+        sleep(this->deltaTime);
+        this->time += this->deltaTime;
+    }
+}
+
+void Server::start()
+{
+    netcode_server_start(this->netcodeServer, this->maxClients);
+}
+
+void Server::update()
+{
+    netcode_server_update(this->netcodeServer, this->time);
 }
 
 int Server::isClientConnected(int clientIndex)
@@ -115,11 +182,6 @@ void Server::freePacket(void *packet)
 }
 
 // ---------------------------------------------------------------------------------
-
-void sendPacketToServer(posit::Server *server, int clientIndex, uint8_t packetData, int packetBytes)
-{
-
-}
 
 void sleep(double seconds)
 {

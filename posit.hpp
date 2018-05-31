@@ -4,8 +4,8 @@
  * @file posit.h
  */
 
-#ifndef POSIT_H
-#define POSIT_H
+#ifndef POSIT_HPP
+#define POSIT_HPP
 
 #include <cstdint>
 
@@ -22,6 +22,11 @@ struct netcode_server_t;
  */
 namespace posit
 {
+
+const int LOG_LEVEL_NONE = 0;
+const int LOG_LEVEL_ERROR = 1;
+const int LOG_LEVEL_INFO = 2;
+const int LOG_LEVEL_DEBUG = 3;
 
 // ---------------------------------------------------------------------------------
 
@@ -45,6 +50,12 @@ int maxClients();
 int maxPacketSize();
 
 /**
+ * Sets log verbosity.
+ * @param level
+ */
+void logLevel(int level);
+
+/**
  * Sets up posit.
  * @returns int 
  */
@@ -59,15 +70,15 @@ void terminate();
 // ---------------------------------------------------------------------------------
 
 /**
- * Declares configuration for posit server.
+ * Declares configuration for posit server. This will contain all configuration
+ * pertaining to the game - movement schemas, entities, hook subscriptions, etc.
  */
-struct ServerOptions
+struct ProtocolOptions
 {
-  ServerOptions(uint64_t protocolID, uint8_t *privateKey, int keyBytes);
+  ProtocolOptions(uint64_t protocolID, int maxClients);
 
   uint64_t protocolID;
-  uint8_t *privateKey;
-  int privateKeyBytes;
+  int maxClients;
 };
 
 // ---------------------------------------------------------------------------------
@@ -78,20 +89,30 @@ struct ServerOptions
 class Server
 {
 public:
-  Server(char *address, double time, posit::ServerOptions *opts);
+  Server(
+      char *address,
+      uint8_t *privateKey,
+      int keyBytes,
+      double time,
+      double delta_time,
+      posit::ProtocolOptions *opts);
   ~Server();
-  void start(int clients);
-  void update(double time);
+  void listenAndServe(volatile int *quit);
   void destroy();
 
   int isClientConnected(int clientID);
-
   void sendPacketToClient(int clientID, uint8_t *packetData, int packetLength);
+
+private:
+  void start();
+  void update();
   uint8_t *receivePacket(int clientID, uint64_t *packetData, int *packetLength);
   void freePacket(void *packet);
 
-private:
   netcode_server_t *netcodeServer;
+  double time;
+  double deltaTime;
+  int maxClients;
 };
 
 // ---------------------------------------------------------------------------------
@@ -108,4 +129,4 @@ void sleep(double seconds);
  * @} End namespace posit documentation
  */
 
-#endif // #ifndef POSIT_H
+#endif // #ifndef POSIT_HPP

@@ -5,7 +5,8 @@
         "string": "cpp",
         "memory": "cpp",
         "__locale": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "utility": "cpp"
     },
     "doxdocgen.generic.authorTag": "",
     "doxdocgen.generic.dateTemplate": "",

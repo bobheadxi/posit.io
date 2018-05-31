@@ -28,8 +28,8 @@ cmake .                # generate Makefiles
 To try the current proof-of-concept demonstration:
 
 ```bash
-make poc
-./bin/poc
+make demo
+./bin/demo
 ```
 
 To execute tests:
