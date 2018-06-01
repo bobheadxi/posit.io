@@ -129,10 +129,10 @@ void Server::listenAndServe(volatile int *quit)
                 }
                 (void)packetSequence;
 
-                // @TODO: do things with packets
                 if (packetBytes > 0)
                 {
-                    std::cout << "Received: " << packet << std::endl;
+                    // @TODO: do things with packets
+                    // std::cout << "Received: " << packet << std::endl;
                 }
 
                 this->freePacket(packet);

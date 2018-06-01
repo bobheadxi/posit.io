@@ -27,7 +27,7 @@ int demo_positServerStart(char *serverAddress, uint64_t protocolID, uint8_t *pri
     std::cout << std::endl;
 
     // Give me all the logs
-    posit::logLevel(posit::LOG_LEVEL_DEBUG);
+    posit::logLevel(posit::LOG_LEVEL_INFO);
 
     // Protocol (game) configuration
     posit::ProtocolOptions options = posit::ProtocolOptions(

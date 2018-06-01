@@ -27,7 +27,7 @@ int demo_clientStart(const char *serverAddress, uint64_t protocolID, uint8_t *pr
     printf("\n");
 
     // Give me all the logs
-    netcode_log_level(NETCODE_LOG_LEVEL_DEBUG);
+    netcode_log_level(NETCODE_LOG_LEVEL_INFO);
 
     // Set up client
     double time = 0.0;
