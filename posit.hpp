@@ -4,9 +4,7 @@
  * @file posit.h
  */
 
-#ifndef POSIT_HPP
-#define POSIT_HPP
-
+#pragma once
 #include <cstdint>
 
 // Netcode types
@@ -75,10 +73,12 @@ void terminate();
  */
 struct ProtocolOptions
 {
-  ProtocolOptions(uint64_t protocolID, int maxClients);
+  uint64_t m_protocolID;
+  int m_maxClients;
 
-  uint64_t protocolID;
-  int maxClients;
+  ProtocolOptions(uint64_t protocolID, int maxClients)
+    : m_protocolID(protocolID)
+    , m_maxClients(maxClients) { }
 };
 
 // ---------------------------------------------------------------------------------
@@ -89,13 +89,7 @@ struct ProtocolOptions
 class Server
 {
 public:
-  Server(
-      char *address,
-      uint8_t *privateKey,
-      int keyBytes,
-      double time,
-      double delta_time,
-      posit::ProtocolOptions *opts);
+  Server(char *address, uint8_t *privateKey, int keyBytes, double time, double delta_time, posit::ProtocolOptions *opts);
   ~Server();
   void listenAndServe(volatile int *quit);
   void destroy();
@@ -109,10 +103,10 @@ private:
   uint8_t *receivePacket(int clientID, uint64_t *packetData, int *packetLength);
   void freePacket(void *packet);
 
-  netcode_server_t *netcodeServer;
-  double time;
-  double deltaTime;
-  int maxClients;
+  netcode_server_t *m_netcodeServer;
+  double m_time;
+  double m_deltaTime;
+  int m_maxClients;
 };
 
 // ---------------------------------------------------------------------------------
@@ -128,5 +122,3 @@ void sleep(double seconds);
 /**
  * @} End namespace posit documentation
  */
-
-#endif // #ifndef POSIT_HPP

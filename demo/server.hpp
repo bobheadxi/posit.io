@@ -1,6 +1,5 @@
 
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#pragma once
 
 #include <cinttypes>
 
@@ -13,5 +12,3 @@
  * @return
  */
 int demo_positServerStart(char *serverAddress, uint64_t protocolID, uint8_t *privateKey, volatile int *quit);
-
-#endif // #ifndef SERVER_HPP

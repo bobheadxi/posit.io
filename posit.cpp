@@ -51,39 +51,24 @@ void terminate()
 
 // ---------------------------------------------------------------------------------
 
-ProtocolOptions::ProtocolOptions(uint64_t setProtocolID, int maxClients)
-{
-    this->protocolID = setProtocolID;
-    this->maxClients = maxClients;
-}
-
-// ---------------------------------------------------------------------------------
-
-Server::Server(
-    char *address,
-    uint8_t *privateKey,
-    int keyBytes,
-    double time,
-    double deltaTime,
+Server::Server(char *address,  uint8_t *privateKey, int keyBytes, double time, double deltaTime,
     posit::ProtocolOptions *opts)
+    : m_time(time)
+    , m_deltaTime(deltaTime)
+    , m_maxClients(opts->m_maxClients)
 {
-    // Set up properties
-    this->time = time;
-    this->deltaTime = deltaTime;
-    this->maxClients = opts->maxClients;
-
     // Set up netcode configuration
     struct netcode_server_config_t netcodeServerConfig;
     netcode_default_server_config(&netcodeServerConfig);
-    netcodeServerConfig.protocol_id = opts->protocolID;
+    netcodeServerConfig.protocol_id = opts->m_protocolID;
     memcpy(&netcodeServerConfig.private_key, privateKey, keyBytes);
 
     // Create server
-    this->netcodeServer = netcode_server_create(
+    m_netcodeServer = netcode_server_create(
         address, &netcodeServerConfig, time);
 
     // Check if successful
-    if (!this->netcodeServer)
+    if (!m_netcodeServer)
     {
         throw 1;
     }
@@ -97,7 +82,7 @@ Server::~Server()
 
 void Server::destroy()
 {
-    netcode_server_destroy(this->netcodeServer);
+    netcode_server_destroy(m_netcodeServer);
 }
 
 void Server::listenAndServe(volatile int *quit)
@@ -116,7 +101,7 @@ void Server::listenAndServe(volatile int *quit)
         // }
 
         // Receive packets from all connected clients
-        for (int clientIndex = 0; clientIndex < this->maxClients; ++clientIndex)
+        for (int clientIndex = 0; clientIndex < m_maxClients; ++clientIndex)
         {
             while (1)
             {
@@ -140,37 +125,35 @@ void Server::listenAndServe(volatile int *quit)
         }
 
         // Wait a moment before repeating
-        sleep(this->deltaTime);
-        this->time += this->deltaTime;
+        sleep(m_deltaTime);
+        m_time += m_deltaTime;
     }
 }
 
 void Server::start()
 {
-    netcode_server_start(this->netcodeServer, this->maxClients);
+    netcode_server_start(m_netcodeServer, m_maxClients);
 }
 
 void Server::update()
 {
-    netcode_server_update(this->netcodeServer, this->time);
+    netcode_server_update(m_netcodeServer, m_time);
 }
 
 int Server::isClientConnected(int clientIndex)
 {
-    return netcode_server_client_connected(
-        this->netcodeServer,
-        clientIndex);
+    return netcode_server_client_connected(m_netcodeServer, clientIndex);
 }
 
 void Server::sendPacketToClient(int clientIndex, uint8_t *packetData, int packetLength)
 {
-    netcode_server_send_packet(this->netcodeServer, clientIndex, packetData, packetLength);
+    netcode_server_send_packet(m_netcodeServer, clientIndex, packetData, packetLength);
 }
 
 uint8_t *Server::receivePacket(int clientIndex, uint64_t *packetData, int *packetLength)
 {
     return netcode_server_receive_packet(
-        this->netcodeServer,
+        m_netcodeServer,
         clientIndex,
         packetLength,
         packetData);
@@ -178,7 +161,7 @@ uint8_t *Server::receivePacket(int clientIndex, uint64_t *packetData, int *packe
 
 void Server::freePacket(void *packet)
 {
-    netcode_server_free_packet(this->netcodeServer, packet);
+    netcode_server_free_packet(m_netcodeServer, packet);
 }
 
 // ---------------------------------------------------------------------------------
